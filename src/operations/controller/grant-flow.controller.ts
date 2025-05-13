@@ -88,12 +88,4 @@ export class GrantFlowController {
   async grantFlowStart(@Param() params: any,@Body() data:GrantFlowStartDto): Promise<void> {
     await this.grantFlowService.startGrantFlow(params.id,data);
   }
-  @Post("done")
-  @ApiResponse({
-    status: 200,
-    description: 'Grant Flow Completed',
-  })
-  async grantFlowDone(@Body() body: any): Promise<void> {
-    Logger.log(body)
-  }
 }

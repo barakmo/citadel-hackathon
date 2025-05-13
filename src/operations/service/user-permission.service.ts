@@ -18,12 +18,12 @@ export class UserPermissionService {
   ) {}
 
   // User Permission Management
-  async assignPermissionToUser(userId: string, permissionId: number, appId: number): Promise<void> {
+  async assignPermissionToUser(userId: string, permissionId: number, appId?: number): Promise<void> {
     const user = await this.getUserWithPermissions(userId);
     const permission = await this.getPermissionById(permissionId);
 
     // Verify permission belongs to the specified app
-    if (permission.app.id !== appId) {
+    if (appId && permission.app.id !== appId) {
       throw new NotFoundException('Permission not found in the specified application');
     }
 

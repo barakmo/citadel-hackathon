@@ -1,4 +1,4 @@
-import { Inject, Injectable, Module, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, Module, NotFoundException } from '@nestjs/common';
 import { CrudStrategy } from '../../strategies/crud.strategy';
 import { UserDto } from '../../dto/user.dto';
 import { User } from '../../db/entity/user';
@@ -16,6 +16,7 @@ export class UserService {
     return users.map(user => UserDto.fromUser(user));
   }
   async createUser(userDto:UserDto):Promise<UserDto> {
+    Logger.log("Create User",userDto);
     const newUser = UserDto.toUser(userDto);
     const user = await this.crud.create<User>(newUser);
     if (!user) {
