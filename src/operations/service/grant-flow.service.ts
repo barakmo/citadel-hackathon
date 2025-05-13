@@ -9,7 +9,12 @@ export class GrantFlowService {
     @Inject('CRUD_PROVIDER')
     private crud: CrudStrategy,
   ) {}
-  
+
+  async getAllGrantFlows(): Promise<GrantFlowDto[]> {
+    const grantFlows = await this.crud.readAllWithRelations<GrantFlow>('GrantFlow', {}, []);
+    return grantFlows.map(flow => GrantFlowDto.fromGrantFlow(flow));
+  }
+
   async createGrantFlow(dto: GrantFlowDto): Promise<GrantFlowDto> {
     const newGrantFlow = GrantFlowDto.toGrantFlow(dto);
     newGrantFlow.id = null;
@@ -19,7 +24,7 @@ export class GrantFlowService {
     }
     return GrantFlowDto.fromGrantFlow(grantFlow);
   }
-  
+
   async readGrantFlow(id: number): Promise<GrantFlowDto> {
     const search = new GrantFlow();
     search.id = id;
@@ -29,7 +34,7 @@ export class GrantFlowService {
     }
     return GrantFlowDto.fromGrantFlow(grantFlow);
   }
-  
+
   async updateGrantFlow(dto: GrantFlowDto): Promise<GrantFlowDto> {
     const grantFlow = await this.crud.update<GrantFlow>(GrantFlowDto.toGrantFlow(dto));
     if (!grantFlow) {
@@ -37,7 +42,7 @@ export class GrantFlowService {
     }
     return GrantFlowDto.fromGrantFlow(grantFlow);
   }
-  
+
   async deleteGrantFlow(id: number): Promise<void> {
     const search = new GrantFlow();
     search.id = id;

@@ -1,11 +1,22 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApplicationService } from '../service/application.service';
 import { ApplicationDto } from '../../dto/application.dto';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('entities/application')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'List all applications' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all applications',
+    type: [ApplicationDto],
+  })
+  async getAllApplications(): Promise<ApplicationDto[]> {
+    return await this.applicationService.getAllApplications();
+  }
 
   @Post("")
   @ApiResponse({
@@ -16,7 +27,7 @@ export class ApplicationController {
   async applicationCreate(@Body() application: ApplicationDto): Promise<ApplicationDto> {
     return await this.applicationService.createApplication(application);
   }
-  
+
   @Get(":id")
   @ApiResponse({
     status: 200,
@@ -32,7 +43,7 @@ export class ApplicationController {
   async applicationRead(@Param() params: any): Promise<ApplicationDto> {
     return await this.applicationService.readApplication(params.id);
   }
-  
+
   @Patch("")
   @ApiResponse({
     status: 200,
@@ -42,7 +53,7 @@ export class ApplicationController {
   async applicationUpdate(@Body() application: ApplicationDto): Promise<ApplicationDto> {
     return await this.applicationService.updateApplication(application);
   }
-  
+
   @Delete(":id")
   @ApiResponse({
     status: 200,

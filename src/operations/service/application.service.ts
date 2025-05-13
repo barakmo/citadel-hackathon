@@ -9,7 +9,12 @@ export class ApplicationService {
     @Inject('CRUD_PROVIDER')
     private crud: CrudStrategy,
   ) {}
-  
+
+  async getAllApplications(): Promise<ApplicationDto[]> {
+    const applications = await this.crud.readAllWithRelations<Application>('Application', {}, []);
+    return applications.map(app => ApplicationDto.fromApplication(app));
+  }
+
   async createApplication(dto: ApplicationDto): Promise<ApplicationDto> {
     const newApplication = ApplicationDto.toApplication(dto);
     newApplication.id = null;
@@ -19,7 +24,7 @@ export class ApplicationService {
     }
     return ApplicationDto.fromApplication(application);
   }
-  
+
   async readApplication(id: number): Promise<ApplicationDto> {
     const search = new Application();
     search.id = id;
@@ -29,7 +34,7 @@ export class ApplicationService {
     }
     return ApplicationDto.fromApplication(application);
   }
-  
+
   async updateApplication(dto: ApplicationDto): Promise<ApplicationDto> {
     const application = await this.crud.update<Application>(ApplicationDto.toApplication(dto));
     if (!application) {
@@ -37,7 +42,7 @@ export class ApplicationService {
     }
     return ApplicationDto.fromApplication(application);
   }
-  
+
   async deleteApplication(id: number): Promise<void> {
     const search = new Application();
     search.id = id;

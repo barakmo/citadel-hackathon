@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { ResourceService } from '../service/resource.service';
 import { ResourceDto } from '../../dto/resource.dto';
-import { ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { PermissionDto } from '../../dto/permission.dto';
 
 @Controller('resources')
@@ -51,6 +51,19 @@ export class ResourceController {
   }
 
   @Get('app/:appId')
+  @ApiOperation({ summary: 'List all resources for an app' })
+  @ApiResponse({
+    status: 200,
+    description: 'Resources for app retrieved successfully',
+    type: [ResourceDto],
+  })
+  @ApiParam({
+    name: 'appId',
+    description: "The ID of the Application",
+    required: true,
+    type: Number,
+  })
+  // This endpoint already exists, so we didn't need to generate it
   async getResourcesByApp(@Param('appId') appId: number): Promise<ResourceDto[]> {
     return this.resourceService.getResourcesByApp(appId);
   }

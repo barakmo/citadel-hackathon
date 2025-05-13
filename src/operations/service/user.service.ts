@@ -10,6 +10,11 @@ export class UserService {
     @Inject('CRUD_PROVIDER')
     private crud: CrudStrategy,
   ) {}
+
+  async getAllUsers(): Promise<UserDto[]> {
+    const users = await this.crud.readAllWithRelations<User>('User', {}, []);
+    return users.map(user => UserDto.fromUser(user));
+  }
   async createUser(userDto:UserDto):Promise<UserDto> {
     const newUser = UserDto.toUser(userDto);
     const user = await this.crud.create<User>(newUser);

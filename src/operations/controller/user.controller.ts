@@ -1,11 +1,22 @@
 import { Body, Controller, Delete, Get, Module, Param, Patch, Post, Req } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserDto } from '../../dto/user.dto';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('entities/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'List all users' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all users',
+    type: [UserDto],
+  })
+  async getAllUsers(): Promise<UserDto[]> {
+    return await this.userService.getAllUsers();
+  }
 
   @Post("")
   @ApiResponse({

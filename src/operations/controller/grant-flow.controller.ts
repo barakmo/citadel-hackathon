@@ -1,11 +1,22 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { GrantFlowService } from '../service/grant-flow.service';
 import { GrantFlowDto } from '../../dto/grant-flow.dto';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('entities/grant-flow')
 export class GrantFlowController {
   constructor(private readonly grantFlowService: GrantFlowService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'List all grant flows' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all grant flows',
+    type: [GrantFlowDto],
+  })
+  async getAllGrantFlows(): Promise<GrantFlowDto[]> {
+    return await this.grantFlowService.getAllGrantFlows();
+  }
 
   @Post("")
   @ApiResponse({
@@ -16,7 +27,7 @@ export class GrantFlowController {
   async grantFlowCreate(@Body() grantFlow: GrantFlowDto): Promise<GrantFlowDto> {
     return await this.grantFlowService.createGrantFlow(grantFlow);
   }
-  
+
   @Get(":id")
   @ApiResponse({
     status: 200,
@@ -32,7 +43,7 @@ export class GrantFlowController {
   async grantFlowRead(@Param() params: any): Promise<GrantFlowDto> {
     return await this.grantFlowService.readGrantFlow(params.id);
   }
-  
+
   @Patch("")
   @ApiResponse({
     status: 200,
@@ -42,7 +53,7 @@ export class GrantFlowController {
   async grantFlowUpdate(@Body() grantFlow: GrantFlowDto): Promise<GrantFlowDto> {
     return await this.grantFlowService.updateGrantFlow(grantFlow);
   }
-  
+
   @Delete(":id")
   @ApiResponse({
     status: 200,

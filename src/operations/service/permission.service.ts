@@ -61,4 +61,18 @@ export class PermissionService {
 
     return permissions.map(permission => PermissionDto.fromPermission(permission));
   }
+
+  async getPermissionsByApp(appId: number): Promise<PermissionDto[]> {
+    const permissions = await this.crud.readAllWithRelations<Permission>(
+      'Permission', 
+      { app: { id: appId } }, 
+      ['app', 'resource', 'grantFlow']
+    );
+
+    if (!permissions || permissions.length === 0) {
+      return [];
+    }
+
+    return permissions.map(permission => PermissionDto.fromPermission(permission));
+  }
 }

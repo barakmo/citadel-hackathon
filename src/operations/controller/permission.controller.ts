@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { PermissionService } from '../service/permission.service';
 import { PermissionDto } from '../../dto/permission.dto';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('entities/permission')
 export class PermissionController {
@@ -59,6 +59,7 @@ export class PermissionController {
   }
 
   @Get('resource/:resourceId')
+  @ApiOperation({ summary: 'List all permissions for a resource' })
   @ApiResponse({
     status: 200,
     description: 'Permissions for resource retrieved successfully',
@@ -72,5 +73,22 @@ export class PermissionController {
   })
   async getPermissionsByResource(@Param('resourceId') resourceId: number): Promise<PermissionDto[]> {
     return await this.permissionService.getPermissionsByResource(resourceId);
+  }
+
+  @Get('app/:appId')
+  @ApiOperation({ summary: 'List all permissions for an app' })
+  @ApiResponse({
+    status: 200,
+    description: 'Permissions for app retrieved successfully',
+    type: [PermissionDto],
+  })
+  @ApiParam({
+    name: 'appId',
+    description: "The ID of the Application",
+    required: true,
+    type: Number,
+  })
+  async getPermissionsByApp(@Param('appId') appId: number): Promise<PermissionDto[]> {
+    return await this.permissionService.getPermissionsByApp(appId);
   }
 }
