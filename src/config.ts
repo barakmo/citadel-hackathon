@@ -1,9 +1,7 @@
-import { Scope } from '@nestjs/common';
-
 type citadelConfig = {
-  crudStrategyScope: Scope
+  n8nUrl: string
 }
 
 export const CitadelConfig : citadelConfig = {
-  crudStrategyScope: Scope.DEFAULT,
+  n8nUrl: "http://localhost:5678/webhook/",
 };

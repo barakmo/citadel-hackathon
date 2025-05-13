@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post } from '@nestjs/common';
 import { GrantFlowService } from '../service/grant-flow.service';
 import { GrantFlowDto } from '../../dto/grant-flow.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation,ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { GrantFlowStartDto } from '../../dto/grant-flow-start.dto';
 
 @Controller('entities/grant-flow')
 export class GrantFlowController {
@@ -67,5 +68,32 @@ export class GrantFlowController {
   })
   async grantFlowDelete(@Param() params: any): Promise<void> {
     await this.grantFlowService.deleteGrantFlow(params.id);
+  }
+  @Post(":id/start")
+  @ApiResponse({
+    status: 200,
+    description: 'Grant Flow Started',
+  })
+  @ApiParam({
+    name: 'id',
+    description: "The ID of the Grant Flow",
+    required: true,
+    type: Number,
+  })
+  @ApiBody({
+    description: "Request Data",
+    required: true,
+    type: GrantFlowStartDto,
+  })
+  async grantFlowStart(@Param() params: any,@Body() data:GrantFlowStartDto): Promise<void> {
+    await this.grantFlowService.startGrantFlow(params.id,data);
+  }
+  @Post("done")
+  @ApiResponse({
+    status: 200,
+    description: 'Grant Flow Completed',
+  })
+  async grantFlowDone(@Body() body: any): Promise<void> {
+    Logger.log(body)
   }
 }

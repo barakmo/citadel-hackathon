@@ -2,6 +2,9 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CrudStrategy } from '../../strategies/crud.strategy';
 import { GrantFlowDto } from '../../dto/grant-flow.dto';
 import { GrantFlow } from '../../db/entity/grant-flow';
+import { CitadelConfig } from '../../config';
+import { GrantFlowStartDto } from '../../dto/grant-flow-start.dto';
+import { Permission } from '../../db/entity/permission';
 
 @Injectable()
 export class GrantFlowService {
@@ -51,5 +54,33 @@ export class GrantFlowService {
       throw new NotFoundException('Grant Flow not found');
     }
     await this.crud.delete<GrantFlow>(grantFlow);
+  }
+
+  async startGrantFlow(id: number,data:GrantFlowStartDto): Promise<void> {
+    const search = new GrantFlow();
+    search.id = id;
+    const grantFlow = await this.crud.read<GrantFlow>(search);
+    if (!grantFlow) {
+      throw new NotFoundException('Grant Flow not found');
+    }
+    const searchPermission = new Permission();
+    searchPermission.id = data.permissionId;
+    const permission = await this.crud.read<Permission>(searchPermission);
+    if (!permission) {
+      throw new NotFoundException('Permission not found');
+    }
+
+    const url = CitadelConfig.n8nUrl + grantFlow.flowId;
+
+    const reqData = {
+      userId: data.userId,
+      permissionId: data.permissionId,
+      permissionName: permission.name
+    }
+
+    await fetch(url,{
+      method: "POST",
+      body: JSON.stringify(reqData)
+    });
   }
 }
