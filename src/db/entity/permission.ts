@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { GrantFlow } from './grant-flow';
 import { Application } from './application';
 import { CommonKeyFields } from './common-key-fields';
 import { Resource } from './resource';
+import { ActiveFlow } from './active-flows';
 
 @Entity()
 export class Permission extends CommonKeyFields{
@@ -16,4 +17,6 @@ export class Permission extends CommonKeyFields{
   grantFlow: GrantFlow;
   @ManyToOne(() => Resource, (resource) => resource.permissions)
   resource: Resource;
+  @OneToMany(() => ActiveFlow, (activeFlow) => activeFlow.permission)
+  activeFlows: ActiveFlow[];
 }

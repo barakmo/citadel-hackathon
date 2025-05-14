@@ -5,6 +5,7 @@ import { GrantFlow } from './entity/grant-flow';
 import { Application } from './entity/application';
 import { AccessTemplate } from './entity/access-template';
 import { Resource } from './entity/resource';
+import { ActiveFlow } from './entity/active-flows';
 
 export const databaseProviders = [
   {
@@ -13,8 +14,8 @@ export const databaseProviders = [
       const dataSource = new DataSource({
         type: "better-sqlite3",
         database: "./dist/database/citadel-hackathon.db",
-        entities: [User,Permission,GrantFlow,Application,AccessTemplate,Resource],
-        synchronize: true,
+        entities: [User,Permission,GrantFlow,Application,AccessTemplate,Resource,ActiveFlow],
+        synchronize: false,
       });
 
       return dataSource.initialize();

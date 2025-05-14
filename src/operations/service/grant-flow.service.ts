@@ -1,10 +1,13 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CrudStrategy } from '../../strategies/crud.strategy';
 import { GrantFlowDto } from '../../dto/grant-flow.dto';
 import { GrantFlow } from '../../db/entity/grant-flow';
 import { CitadelConfig } from '../../config';
 import { GrantFlowStartDto } from '../../dto/grant-flow-start.dto';
 import { Permission } from '../../db/entity/permission';
+import { ActiveFlow } from '../../db/entity/active-flows';
+import { User } from '../../db/entity/user';
+import { GrantFlowStartRespDto } from '../../dto/grant-flow-start-resp';
 
 @Injectable()
 export class GrantFlowService {
@@ -57,9 +60,15 @@ export class GrantFlowService {
   }
 
   async startGrantFlow(id: number,data:GrantFlowStartDto): Promise<void> {
-    const search = new GrantFlow();
-    search.id = id;
-    const grantFlow = await this.crud.read<GrantFlow>(search);
+    const searchUser = new User();
+    searchUser.userId = data.userId;
+    const user = await this.crud.read<User>(searchUser);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const searchGrantFlow = new GrantFlow();
+    searchGrantFlow.id = id;
+    const grantFlow = await this.crud.read<GrantFlow>(searchGrantFlow);
     if (!grantFlow) {
       throw new NotFoundException('Grant Flow not found');
     }
@@ -78,9 +87,22 @@ export class GrantFlowService {
       permissionName: permission.name
     }
 
-    await fetch(url,{
+    const resp = await fetch(url,{
       method: "POST",
       body: JSON.stringify(reqData)
     });
+
+    const result:GrantFlowStartRespDto = await resp.json();
+
+    const activeFlow = new ActiveFlow();
+    activeFlow.flowId = result.flowExecutionId;
+    activeFlow.user = user;
+    activeFlow.permission = permission;
+    const savedFlow = await activeFlow.save()
+
+    if (!savedFlow || !savedFlow.hasId()) {
+      throw new InternalServerErrorException('Flow Not Started');
+    }
+
   }
 }

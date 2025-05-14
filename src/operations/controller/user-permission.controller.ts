@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post } from '@nestjs/common';
 import { UserPermissionService } from '../service/user-permission.service';
 import { PermissionDto } from '../../dto/permission.dto';
-import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResourcePermissionsDto } from '../../dto/resource-permissions.dto';
 import { AccessTemplateDto } from '../../dto/access-template.dto';
+import { GrantFlowDoneDto } from '../../dto/grant-flow-done.dto';
 
 @ApiTags('User Permissions')
 @Controller('user-permissions')
@@ -339,10 +340,11 @@ export class UserPermissionController {
     status: 200,
     description: 'Grant Flow Completed',
   })
-  async grantFlowDone(@Body() body: any): Promise<void> {
-    Logger.log(body)
-    if(body.allowed){
-      await this.userPermissionService.assignPermissionToUser(body.userId, body.permissionId)
+  async grantFlowDone(@Body() req: GrantFlowDoneDto): Promise<void> {
+    Logger.log(req)
+    if(req.allowed){
+      await this.userPermissionService.assignPermissionToUser(req.userId, req.permissionId)
     }
+    await this.userPermissionService.updateFlow(req)
   }
 }

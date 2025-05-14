@@ -1,7 +1,7 @@
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm';
 import { AccessTemplate } from './access-template';
 import { Permission } from './permission';
-import { CommonKeyFields } from './common-key-fields';
+import { ActiveFlow } from './active-flows';
 
 @Entity()
 export class User extends BaseEntity{
@@ -10,7 +10,7 @@ export class User extends BaseEntity{
   })
   userId:string;
 
-  @ManyToMany((type)=> AccessTemplate)
+  @ManyToMany(()=> AccessTemplate)
   @JoinTable({
     name: "users_templates", // table name for the junction table of this relation
     joinColumn: {
@@ -24,7 +24,7 @@ export class User extends BaseEntity{
   })
   templates: AccessTemplate[];
 
-  @ManyToMany((type)=> Permission)
+  @ManyToMany(()=> Permission)
   @JoinTable({
     name: "users_permissions", // table name for the junction table of this relation
     joinColumn: {
@@ -37,4 +37,7 @@ export class User extends BaseEntity{
     }
   })
   allowedPermissions: Permission[];
+
+  @OneToMany(() => ActiveFlow, (activeFlow) => activeFlow.user)
+  activeFlows: ActiveFlow[];
 }
