@@ -15,7 +15,7 @@ export const databaseProviders = [
         type: "better-sqlite3",
         database: "./dist/database/citadel-hackathon.db",
         entities: [User,Permission,GrantFlow,Application,AccessTemplate,Resource,ActiveFlow],
-        synchronize: false,
+        synchronize: true,
       });
 
       return dataSource.initialize();
